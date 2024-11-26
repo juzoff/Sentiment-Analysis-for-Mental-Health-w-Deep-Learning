@@ -1,7 +1,9 @@
 # DEEP LEARNING USING DistillBERT
 
 ## Using R, Prepared Dataset for DistillBERT Training Through Light Preprocessing and Exported as CSV File
-### > FILE: *Dataset preperation for DistillBERT.RMD*
+### > FILE: 
+    - Dataset preperation for DistillBERT.RMD
+    - Dataset preperation for DistilBERT Training.pdf
 #### Highlights:
 - Check for missing values
 - Balance Class Counts:
@@ -18,7 +20,8 @@
   - The cleaned dataset is exported as a CSV file (Cleaned_Statements_Less.csv) for model training with DistillBERT
 
 ## Loaded the Light Preprocessed Dataset and Trained a DistillBERT Model for Mental Health Status Classification
-### > FILE: *DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb*
+### > FILE: 
+    - DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb
 #### Highlights:
 - Dataset Preparation:
   - Preprocessed and classified mental health status into 7 categories (e.g., Normal, Depression, Anxiety)
@@ -34,7 +37,8 @@
   - Best model saved at /content/drive/MyDrive/results/best_model
 
 ## Developed Functions to Evaluate the Model Using Confusion Matrices and Visualized Its Performance
-### > FILE: *DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb*
+### > FILE: 
+    - DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb
 #### Highlights:
 - Metrics Calculation:
   - Accuracy: 
@@ -52,7 +56,8 @@
 
 
 ## Implemented a Real-Time Prediction System That Classifies New Statements and Provides a Confidence Score for Each Mental Health Status Through the Trained DistillBERT Model
-### > FILE: *DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb*
+### > FILE: 
+    - DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb
 #### Highlights:
 
 
