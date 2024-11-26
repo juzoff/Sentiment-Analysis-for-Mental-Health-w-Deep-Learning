@@ -3,7 +3,7 @@
 
 ### Note: This project is organized into multiple branches on GitHub, each correlating with a different portion of the assignment. To explore specific sections, please select the branch that corresponds to the task or analysis you are interested in. 
 ## Branches: 
->Deep Learning using DistillBERT
+### >Deep Learning using DistillBERT ###
 - Using R, prepared dataset for DistillBERT training through light preprocessing and exporting as CSV file
 - Loading the light preprocessed dataset and trained a DistillBERT model for mental health status classification
 - Developed functions to evaluate the model using confusion matrices and visualized its performance
