@@ -38,7 +38,7 @@
 
 ## Developed Functions to Evaluate the Model Using Confusion Matrices and Visualized Its Performance
 ### > FILE: 
-    - DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb
+    - DistilBERT_Sentiment_Analysis_NLP_Deep_Learning.ipynb
 #### Highlights:
 - Metrics Calculation:
   - Accuracy: 
@@ -57,7 +57,7 @@
 
 ## Implemented a Real-Time Prediction System That Classifies New Statements and Provides a Confidence Score for Each Mental Health Status Through the Trained DistillBERT Model
 ### > FILE: 
-    - DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb
+    - DistilBERT_Sentiment_Analysis_NLP_Deep_Learning.ipynb
 #### Highlights:
 
 
