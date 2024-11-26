@@ -3,7 +3,17 @@
 
 ### Note: This project is organized into multiple branches on GitHub, each correlating with a different portion of the assignment. To explore specific sections, please select the branch that corresponds to the task or analysis you are interested in. 
 ## Branches: 
-### >Deep Learning using DistillBERT ###
+### >NLP - Data Preprocessing, Exploration, and Visualization (R) ###
+- Loaded and explored the dataset, removing redundant columns and handling missing values
+- Balanced the class attribute (Status) by adjusting each class to match the median status count (3888)
+- Sampled the dataset by selecting 15% of the median value per class for consistency
+- Applied NLP techniques, including term frequency (TF), word clouds, and TF-IDF, to analyze prominent words in each mental health status
+- Calculated bigrams and created functions to count words and locate specific terms in the dataset
+- Visualization (R):
+  - Created interactive barcharts to visualize the TF, TF-IDF, Bigram for each mental health status
+  - Generated word clouds to illustrate key terms across the entire dataset and by individual status
+
+### >Deep Learning using DistillBERT (Using Python on Google Colab) ###
 - Using R, prepared dataset for DistillBERT training through light preprocessing and exporting as CSV file
 - Loading the light preprocessed dataset and trained a DistillBERT model for mental health status classification
 - Developed functions to evaluate the model using confusion matrices and visualized its performance
