@@ -1,0 +1,202 @@
+# Loading the orginal dataset
+```{r}
+# Set the file path for the CSV file
+file_path2 <- "C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Sentiment Analysis for Mental Health/Combined Data.csv"
+
+
+# Read the CSV file into a dataframe
+sentiment_analysis <- read.csv(file_path2, header = TRUE)
+```
+
+# Removing redundant X column
+```{r}
+sentiment_analysis_use <- sentiment_analysis[, !names(sentiment_analysis) %in% c("X")]
+```
+
+# Matching each status count to median (3888)
+```{r}
+# Load the libraries
+library(dplyr)
+library(caret)
+
+# Assuming your dataset is called sentiment_analysis
+# Get the distribution of the classes in the sentiment_analysis dataset
+class_counts <- table(sentiment_analysis_use$status)
+
+# Initialize an empty list to hold the balanced dataset
+balanced_data <- list()
+
+# Loop through each class
+for (class in names(class_counts)) {
+  # Subset the data for the current class
+  class_data <- sentiment_analysis_use %>% filter(status == class)
+  
+  # If the class has fewer than 3888 samples, oversample
+  if (nrow(class_data) < 3888) {
+    # Oversample with replacement
+    class_data <- class_data[sample(1:nrow(class_data), 3888, replace = TRUE), ]
+  }
+  
+  # If the class has more than 3888 samples, undersample
+  else if (nrow(class_data) > 3888) {
+    # Undersample to 3888 samples
+    class_data <- class_data[sample(1:nrow(class_data), 3888), ]
+  }
+  
+  # Add the balanced class data to the list
+  balanced_data[[class]] <- class_data
+}
+
+# Combine the balanced data
+balanced_data <- do.call(rbind, balanced_data)
+
+# Check the distribution of the balanced data
+balanced_class_counts <- table(balanced_data$status)
+print(balanced_class_counts)
+```
+
+# Setting a fixed sample size per class (15% of 3888)
+```{r}
+fixed_sample_size <- 583  # Round down to ensure consistency across classes
+
+# Perform stratified sampling
+sampled_balanced_data <- do.call(rbind, lapply(split(balanced_data, balanced_data$status), function(class_data) {
+  class_data[sample(1:nrow(class_data), fixed_sample_size), ]
+}))
+
+# Check the new distribution
+table(sampled_balanced_data$status)
+```
+
+# Preprocessing text data
+```{r}
+# Load required libraries
+library(textstem)
+library(tm)
+library(textclean)  # Ensure this library is loaded for replace_contraction()
+library(quanteda)   # For tokenization and n-grams
+
+# Replace stemming with lemmatization
+corpus <- Corpus(VectorSource(sampled_balanced_data$statement))
+
+# Apply preprocessing steps
+corpus <- tm_map(corpus, content_transformer(tolower))        # Convert to lowercase
+corpus <- tm_map(corpus, content_transformer(replace_contraction))  # Correctly use textclean's function
+corpus <- tm_map(corpus, removePunctuation)                   # Remove punctuation
+corpus <- tm_map(corpus, removeNumbers)                       # Remove numbers
+corpus <- tm_map(corpus, stripWhitespace)                     # Remove extra whitespaces
+
+# Remove non-alphanumeric characters (optional)
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("[^[:alnum:] ]", "", x)))
+
+# Remove URLs (optional)
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("http[s]?://\\S+", "", x)))
+
+# Remove mentions and hashtags (optional, useful for social media data)
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("@\\S+|#\\S+", "", x)))
+
+# Remove stopwords
+corpus <- tm_map(corpus, removeWords, stopwords("en"))
+
+# Correct spelling mistakes (optional, if needed)
+# Use textclean or hunspell for spell correction if applicable
+
+# Apply lemmatization
+cleaned_statements <- data.frame(statement = lemmatize_strings(sapply(corpus, as.character)),
+                                 status = sampled_balanced_data$status)
+
+# Remove short texts (optional)
+cleaned_statements <- cleaned_statements[nchar(as.character(cleaned_statements$statement)) > 3, ]
+
+# View a sample of the cleaned data
+head(cleaned_statements)
+
+# Optional: Convert cleaned data to Document-Term Matrix (DTM)
+dtm <- DocumentTermMatrix(Corpus(VectorSource(cleaned_statements$statement)))
+```
+
+# Word Cloud - All Statuses
+```{r}
+library(wordcloud)
+wordcloud(words = unlist(strsplit(as.character(cleaned_statements$statement), " ")), 
+          min.freq = 125, scale=c(4,0.8), colors=brewer.pal(8, "Dark2"))
+```
+
+# Word Cloud - Anxiety
+```{r}
+library(wordcloud)
+library(RColorBrewer)
+
+# Anxiety Word Cloud
+anxiety_data <- cleaned_statements[cleaned_statements$status == "Anxiety", ]
+wordcloud(words = unlist(strsplit(as.character(anxiety_data$statement), " ")), 
+          min.freq = 100, 
+          scale=c(4,0.8), 
+          colors=brewer.pal(8, "Dark2"), 
+          main = "Word Cloud for Anxiety")
+```
+
+# Word Cloud - Bipolar
+```{r}
+# Bipolar Word Cloud
+bipolar_data <- cleaned_statements[cleaned_statements$status == "Bipolar", ]
+wordcloud(words = unlist(strsplit(as.character(bipolar_data$statement), " ")), 
+          min.freq = 100, 
+          scale=c(4,0.8), 
+          colors=brewer.pal(8, "Dark2"), 
+          main = "Word Cloud for Bipolar")
+```
+
+# Word Cloud - Depression
+```{r}
+# Depression Word Cloud
+depression_data <- cleaned_statements[cleaned_statements$status == "Depression", ]
+wordcloud(words = unlist(strsplit(as.character(depression_data$statement), " ")), 
+          min.freq = 100, 
+          scale=c(4,0.8), 
+          colors=brewer.pal(8, "Dark2"), 
+          main = "Word Cloud for Depression")
+```
+
+# Word Count - Normal
+```{r}
+# Normal Word Cloud
+normal_data <- cleaned_statements[cleaned_statements$status == "Normal", ]
+wordcloud(words = unlist(strsplit(as.character(normal_data$statement), " ")), 
+          min.freq = 15, 
+          scale=c(4,0.8), 
+          colors=brewer.pal(8, "Dark2"), 
+          main = "Word Cloud for Normal")
+```
+
+# Word Cloud - Personality Disorder
+```{r}
+# Personality Disorder Word Cloud
+pd_data <- cleaned_statements[cleaned_statements$status == "Personality disorder", ]
+wordcloud(words = unlist(strsplit(as.character(pd_data$statement), " ")), 
+          min.freq = 100, 
+          scale=c(4,0.8), 
+          colors=brewer.pal(8, "Dark2"), 
+          main = "Word Cloud for Personality Disorder")
+```
+
+# Word Cloud - Stress
+```{r}
+stress_data <- cleaned_statements[cleaned_statements$status == "Stress", ]
+wordcloud(words = unlist(strsplit(as.character(stress_data$statement), " ")), 
+          min.freq = 75, 
+          scale=c(4,0.8), 
+          colors=brewer.pal(8, "Dark2"), 
+          main = "Word Cloud for Stress")
+```
+
+# Word Cloud - Suicidal
+```{r}
+# Suicidal Word Cloud
+suicidal_data <- cleaned_statements[cleaned_statements$status == "Suicidal", ]
+wordcloud(words = unlist(strsplit(as.character(suicidal_data$statement), " ")), 
+          min.freq = 100, 
+          scale=c(4,0.8), 
+          colors=brewer.pal(8, "Dark2"), 
+          main = "Word Cloud for Suicidal")
+```
