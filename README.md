@@ -4,7 +4,7 @@
 ## > FILES:
     Sentiment Analysis for Mental Health - Data Preprocessing and Exploration.Rmd
     Sentiment Analysis for Mental Health - Data Preprocessing and Exploration.PDF (Knitted)
-### 1.1: Loaded and explored the dataset, removing redundant columns and handling missing values
+### 1.1: Loaded and explored the dataset, removing redundant columns and checking/handling missing values
 ### 1.2: Balanced the class attribute (Status) by adjusting each class to match the median status count (3888)
 ### 1.3: Sampled the dataset by selecting 15% of the median value per class for consistency
 ### 1.4: Preprocessing text data
