@@ -59,7 +59,12 @@
 ### > FILE: 
     - DistilBERT_Sentiment_Analysis_NLP_Deep_Learning.ipynb
 #### Highlights:
-
+- Label Mapping
+- Prediction Function: predict_statement
+- Returned Values
+  - The mental health status with the highest predicted probability is returned
+![PREDICTION](https://github.com/user-attachments/assets/1b719e61-0193-40c3-93e6-844448f01af4)
+![prediction2](https://github.com/user-attachments/assets/b76d56de-ce4b-4d82-9165-9b8baf449433)
 
 
 
