@@ -12,7 +12,7 @@
 #### *Refer to the following document for interactive barcharts to visualize the TF, TF-IDF, Bigram for each mental health status (2.1, 2.2, 2.3)
     Sentiment Analysis for Mental Health - Barcharts.PDF
 ### 3.1: Function to search for a word in a particular status and return the count of occurrences
-### 3.2: Function to search for a word in a particular status
+### 3.2: Function to search for the location of a word in a particular status
 ### 3.3: Function to calculate Cosine Similarity between 2 inputted sentences
 
 ## > FILES:
