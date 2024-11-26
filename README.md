@@ -7,7 +7,7 @@
 - Balance Class Counts:
   - Equalize the count of each mental health status category by adjusting them to the median value (3888)
 - Set Fixed Sample Size per Class:
-  - Select a fixed sample size for each class, equivalent to 15% of the median value (15% of 3888 = ~583 samples per class)
+  - Select a fixed sample size for each class, equivalent to 25% of the median value (25% of 3888 = ~972 samples per class)
 - Light Text Preprocessing:
   - The text data undergoes minimal preprocessing, including:
     - Converting text to lowercase
@@ -29,7 +29,7 @@
 - Model Training:
   - Fine-tuned DistilBertForSequenceClassification with Hugging Face Trainer API
 - Hyperparameters:
-  - Epochs: 8, Batch Size: 16 (Train) & 64 (Eval)
+  - Epochs: 16, Batch Size: 16 (Train) & 64 (Eval)
 - Results:
   - Best model saved at /content/drive/MyDrive/results/best_model
 
@@ -38,17 +38,18 @@
 #### Highlights:
 - Metrics Calculation:
   - Accuracy: 
-    - **0.8005%**
+    - **0.8229%**
   - Precision (Weighted): 
-    - **0.8193%**
+    - **0.8274%**
   - Recall (Weighted):
-    - **0.8005%**
+    - **0.8229%**
   - Specificity: 
-    - **0.7665%**
+    - **0.7945%**
 - Confusion Matrix
   - Generated and visualized a confusion matrix using Seaborn's heatmap to display the distribution of predictions vs. actual labels
-![confusion matrix](https://github.com/user-attachments/assets/c3c9c4bf-dda5-4dbc-a05c-57e1d23a3a5e)
-![pic](https://github.com/user-attachments/assets/c0179f20-64f5-4ecf-8200-767b629aa63b)
+![confusion matrix](https://github.com/user-attachments/assets/af971b9b-8d5e-4d6b-8d27-e3951c0b2b4d)
+![output](https://github.com/user-attachments/assets/4591fdcb-678c-41d8-a27c-f5ed112f3784)
+
 
 ## Implemented a Real-Time Prediction System That Classifies New Statements and Provides a Confidence Score for Each Mental Health Status Through the Trained DistillBERT Model
 ### > FILE: *DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb*
