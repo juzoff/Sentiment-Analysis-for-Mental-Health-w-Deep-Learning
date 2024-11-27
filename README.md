@@ -42,17 +42,18 @@
 #### Highlights:
 - Metrics Calculation:
   - Accuracy: 
-    - **0.8229%**
+    - **0.8369%**
   - Precision (Weighted): 
-    - **0.8274%**
+    - **0.8380%**
   - Recall (Weighted):
-    - **0.8229%**
+    - **0.8369%**
   - Specificity: 
-    - **0.7945%**
+    - **0.8106%**
 - Confusion Matrix
   - Generated and visualized a confusion matrix using Seaborn's heatmap to display the distribution of predictions vs. actual labels
-![confusion matrix](https://github.com/user-attachments/assets/af971b9b-8d5e-4d6b-8d27-e3951c0b2b4d)
-![output](https://github.com/user-attachments/assets/4591fdcb-678c-41d8-a27c-f5ed112f3784)
+![er](https://github.com/user-attachments/assets/d62bbe61-e3f7-43d1-9e5e-d2a06889b0a2)
+![cm](https://github.com/user-attachments/assets/fb4aa9df-42c6-466e-90e6-50821bc51bd4)
+
 
 
 ## Implemented a Real-Time Prediction System That Classifies New Statements and Provides a Confidence Score for Each Mental Health Status Through the Trained DistilBERT Model
@@ -63,8 +64,7 @@
 - Prediction Function: predict_statement
 - Returned Values
   - The mental health status with the highest predicted probability is returned
-![PREDICTION](https://github.com/user-attachments/assets/1b719e61-0193-40c3-93e6-844448f01af4)
-![prediction2](https://github.com/user-attachments/assets/b76d56de-ce4b-4d82-9165-9b8baf449433)
+
 
 
 
