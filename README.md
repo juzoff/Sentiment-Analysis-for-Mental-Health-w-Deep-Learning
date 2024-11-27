@@ -65,6 +65,8 @@
 - Returned Values
   - The mental health status with the highest predicted probability is returned
 
+![pred2](https://github.com/user-attachments/assets/f93549f7-d63f-478d-8ddf-b730711df0f6)
+![pred](https://github.com/user-attachments/assets/9bd84c58-22c4-4baa-9996-6226535c2412)
 
 
 
