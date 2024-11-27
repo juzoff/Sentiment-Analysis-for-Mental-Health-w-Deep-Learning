@@ -13,13 +13,13 @@
 ##### *Sentiment Analysis for Mental Health - Barcharts.PDF is a document containing interactive barcharts visualizing the TF, TF-IDF, Bigram for each mental health status*(2.1, 2.2, 2.3)
     Sentiment Analysis for Mental Health - Barcharts.PDF
 >Examples: Stress and Suicidal (for the other 5 statuses, see directly above)
-![stresstf](https://github.com/user-attachments/assets/5d76a996-6c6d-42fc-a874-fd91d70edbcf)
-![TFIDF Stress](https://github.com/user-attachments/assets/c4ce7a29-c60c-47bf-aa6f-fe2d48fcaeee)
-![Bigram Stress](https://github.com/user-attachments/assets/aa3c0960-86bf-4f3b-97c5-fb0b20e1a4bb)
+<img src="https://github.com/user-attachments/assets/5d76a996-6c6d-42fc-a874-fd91d70edbcf" alt="stresstf" width="300" />
+<img src="https://github.com/user-attachments/assets/c4ce7a29-c60c-47bf-aa6f-fe2d48fcaeee" alt="TFIDF Stress" width="300" />
+<img src="https://github.com/user-attachments/assets/aa3c0960-86bf-4f3b-97c5-fb0b20e1a4bb" alt="Bigram Stress" width="300" />
 
-![tfsuicidal](https://github.com/user-attachments/assets/40143b84-50a7-46f8-9e88-953ab971cb46)
-![TFIDF Suicidal](https://github.com/user-attachments/assets/232d8664-125b-40d0-b9b7-25b9a0ab85cb)
-![Bigram Suicidal](https://github.com/user-attachments/assets/2db898db-c5e8-4389-b5a6-d33aba8940ff)
+<img src="https://github.com/user-attachments/assets/40143b84-50a7-46f8-9e88-953ab971cb46" alt="tfsuicidal" width="300" />
+<img src="https://github.com/user-attachments/assets/232d8664-125b-40d0-b9b7-25b9a0ab85cb" alt="TFIDF Suicidal" width="300" />
+<img src="https://github.com/user-attachments/assets/2db898db-c5e8-4389-b5a6-d33aba8940ff" alt="Bigram Suicidal" width="300" />
 
 ### 3.1: Function to search for a word in a particular status and return the count of occurrences
 ### 3.2: Function to search for the location of a word in a particular status
