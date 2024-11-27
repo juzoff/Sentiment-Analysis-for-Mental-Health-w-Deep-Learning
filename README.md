@@ -13,11 +13,11 @@
   - Created interactive barcharts to visualize the TF, TF-IDF, Bigram for each mental health status
   - Generated word clouds to illustrate key terms across the entire dataset and by individual status
 
-### >Deep Learning using DistillBERT (Using Python on Google Colab) ###
-- Using R, prepared dataset for DistillBERT training through light preprocessing and exporting as CSV file
-- Loading the light preprocessed dataset and trained a DistillBERT model for mental health status classification
+### >Deep Learning using DistilBERT (Using Python on Google Colab) ###
+- Using R, prepared dataset for DistilBERT training through light preprocessing and exporting as CSV file
+- Loading the light preprocessed dataset and trained a DistilBERT model for mental health status classification
 - Developed functions to evaluate the model using confusion matrices and visualized its performance
-- Implemented a real-time prediction system that classifies new statements and provides a confidence score for each mental health status through the trained DistillBERT model
+- Implemented a real-time prediction system that classifies new statements and provides a confidence score for each mental health status through the trained DistilBERT model
 ## 
 The project involved extensive data preprocessing, deep learning, and text analysis techniques to build a model capable of classifying mental health statuses based on textual statements. The goal was to build a model capable of identifying key mental health statuses such as Depression, Anxiety, Stress, Suicidal tendencies, Bipolar disorder, and Personality Disorders based on various types of text, including social media posts, forum conversations, and personal statements. By leveraging natural language processing (NLP) and deep learning techniques, this project allowed me to gain insights into mental health trends.
 
