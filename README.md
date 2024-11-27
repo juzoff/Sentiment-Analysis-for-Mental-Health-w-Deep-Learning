@@ -24,6 +24,10 @@
 ### 3.1: Function to search for a word in a particular status and return the count of occurrences
 ### 3.2: Function to search for the location of a word in a particular status
 ### 3.3: Function to calculate Cosine Similarity between 2 inputted sentences
+<img src="https://github.com/user-attachments/assets/e9197e9f-a914-4cc0-8845-607b7bc7affe" alt="cosine3" width="300" />
+<img src="https://github.com/user-attachments/assets/628fdd8d-ed2b-48bb-beaf-61aaca07aae1" alt="cosine2" width="300" />
+<img src="https://github.com/user-attachments/assets/d1f8a7fc-3d59-4402-ad86-a51d81901791" alt="cosine" width="300" />
+
 
 ## Task 2 ##
 ##  > FILES:
