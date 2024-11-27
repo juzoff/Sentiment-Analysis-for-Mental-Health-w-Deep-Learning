@@ -12,7 +12,7 @@
 ### 2.1, 2.2, 2.3: Applied NLP techniques, including identifying term frequency (TF), TF-IDF, and bigrams to analyze prominent words in each mental health status
 ##### *Sentiment Analysis for Mental Health - Barcharts.PDF is a document containing interactive barcharts visualizing the TF, TF-IDF, Bigram for each mental health status*(2.1, 2.2, 2.3)
     Sentiment Analysis for Mental Health - Barcharts.PDF
->Examples: Stress and Suicidal (for the other 5 statuses, see directly above)
+- Examples: Stress and Suicidal (for the other 5 statuses, see directly above)
 <img src="https://github.com/user-attachments/assets/5d76a996-6c6d-42fc-a874-fd91d70edbcf" alt="stresstf" width="300" />
 <img src="https://github.com/user-attachments/assets/c4ce7a29-c60c-47bf-aa6f-fe2d48fcaeee" alt="TFIDF Stress" width="300" />
 <img src="https://github.com/user-attachments/assets/aa3c0960-86bf-4f3b-97c5-fb0b20e1a4bb" alt="Bigram Stress" width="300" />
