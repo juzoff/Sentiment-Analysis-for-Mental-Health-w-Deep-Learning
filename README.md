@@ -3,7 +3,7 @@
 ## Using R, Prepared Dataset for DistilBERT Training Through Light Preprocessing and Exported as CSV File
 ### > FILE: 
     - Dataset preperation for DistilBERT.Rmd
-    - Dataset preperation for DistilBERT Training.pdf (Knitted)
+    - Dataset preperation for DistilBERT.pdf (Knitted)
 #### Highlights:
 - Check for missing values
 - Balance Class Counts:
