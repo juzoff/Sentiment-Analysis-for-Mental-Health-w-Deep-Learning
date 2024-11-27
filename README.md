@@ -22,7 +22,11 @@
 <img src="https://github.com/user-attachments/assets/2db898db-c5e8-4389-b5a6-d33aba8940ff" alt="Bigram Suicidal" width="300" />
 
 ### 3.1: Function to search for a word in a particular status and return the count of occurrences
+<img src="https://github.com/user-attachments/assets/26a3fd81-d039-4ff3-8e9c-f621e9f7dfa3" alt="function" width="300" />
+
 ### 3.2: Function to search for the location of a word in a particular status
+
+
 ### 3.3: Function to calculate Cosine Similarity between 2 inputted sentences
 <img src="https://github.com/user-attachments/assets/e9197e9f-a914-4cc0-8845-607b7bc7affe" alt="cosine3" width="300" />
 <img src="https://github.com/user-attachments/assets/628fdd8d-ed2b-48bb-beaf-61aaca07aae1" alt="cosine2" width="300" />
