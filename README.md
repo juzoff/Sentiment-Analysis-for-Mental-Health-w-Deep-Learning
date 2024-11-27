@@ -9,7 +9,7 @@
 ### 1.3: Sampled the dataset by selecting 15% of the median value per class for consistency
 ### 1.4: Preprocessing text data
 ### 2.1, 2.2, 2.3: Applied NLP techniques, including identifying term frequency (TF), TF-IDF, and bigrams to analyze prominent words in each mental health status
-#### *Refer to the following document for interactive barcharts to visualize the TF, TF-IDF, Bigram for each mental health status (2.1, 2.2, 2.3)
+#### *Sentiment Analysis for Mental Health - Barcharts.PDF is a document containing interactive barcharts to visualize the TF, TF-IDF, Bigram for each mental health status (2.1, 2.2, 2.3)
     Sentiment Analysis for Mental Health - Barcharts.PDF
 ### 3.1: Function to search for a word in a particular status and return the count of occurrences
 ### 3.2: Function to search for the location of a word in a particular status
