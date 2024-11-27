@@ -1,0 +1,143 @@
+---
+title: "Sentiment Analysis for Mental Health - PREPARING DATASET FOR DistilBERT DEEP LEARNING MODEL"
+output: html_document
+date: "2024-11-27"
+---
+# Loading the original dataset
+```{r}
+# Set the file path for the CSV file
+file_path2 <- "C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Sentiment Analysis for Mental Health/Combined Data.csv"
+
+
+# Read the CSV file into a dataframe
+sentiment_analysis <- read.csv(file_path2, header = TRUE)
+```
+
+# Printing the first few rows of the dataframe
+```{r}
+print(head(sentiment_analysis))
+```
+# Removing redundant X column
+```{r}
+sentiment_analysis_use <- sentiment_analysis[, !names(sentiment_analysis) %in% c("X")]
+```
+
+```{r}
+print(head(sentiment_analysis_use))
+```
+
+# Structure of dataset
+```{r}
+str(sentiment_analysis_use)
+```
+
+# Check for missing values
+```{r}
+# Check for missing values in each column
+colSums(is.na(sentiment_analysis_use))
+```
+
+# Distribution of mental health statuses
+```{r}
+status_counts <- table(sentiment_analysis_use$status)
+print(status_counts)
+```
+
+# Matching each status count to median (3888)
+```{r}
+# Load the libraries
+library(dplyr)
+library(caret)
+
+# Assuming your dataset is called sentiment_analysis
+# Get the distribution of the classes in the sentiment_analysis dataset
+class_counts <- table(sentiment_analysis_use$status)
+
+# Initialize an empty list to hold the balanced dataset
+balanced_data <- list()
+
+# Loop through each class
+for (class in names(class_counts)) {
+  # Subset the data for the current class
+  class_data <- sentiment_analysis_use %>% filter(status == class)
+  
+  # If the class has fewer than 3888 samples, oversample
+  if (nrow(class_data) < 3888) {
+    # Oversample with replacement
+    class_data <- class_data[sample(1:nrow(class_data), 3888, replace = TRUE), ]
+  }
+  
+  # If the class has more than 3888 samples, undersample
+  else if (nrow(class_data) > 3888) {
+    # Undersample to 3888 samples
+    class_data <- class_data[sample(1:nrow(class_data), 3888), ]
+  }
+  
+  # Add the balanced class data to the list
+  balanced_data[[class]] <- class_data
+}
+
+# Combine the balanced data
+balanced_data <- do.call(rbind, balanced_data)
+
+# Check the distribution of the balanced data
+balanced_class_counts <- table(balanced_data$status)
+print(balanced_class_counts)
+```
+# Checking structure of balanced data
+```{r}
+str(balanced_data)
+```
+# Setting a fixed sample size per class (25% of 3888)
+```{r}
+# Set a fixed sample size per class (e.g., 25% of 3888)
+fixed_sample_size <- 972  # Round down to ensure consistency across classes
+
+# Perform stratified sampling
+sampled_balanced_data <- do.call(rbind, lapply(split(balanced_data, balanced_data$status), function(class_data) {
+  class_data[sample(1:nrow(class_data), fixed_sample_size), ]
+}))
+
+# Check the new distribution
+table(sampled_balanced_data$status)
+```
+# Structure of sampled balanced dataset
+```{r}
+str(sampled_balanced_data)
+```
+
+# Light preprocessing of text data and exporting as CSV for DistilBERT to use
+```{r}
+# Load required libraries
+library(textclean)  # For replace_contraction and text cleaning
+library(tm)         # For corpus and text manipulation
+
+# Replace stemming with lemmatization
+corpus <- Corpus(VectorSource(sampled_balanced_data$statement))
+
+# Apply minimal preprocessing steps
+corpus <- tm_map(corpus, content_transformer(tolower))  # Convert to lowercase
+corpus <- tm_map(corpus, stripWhitespace)                # Strip extra whitespaces
+
+# Remove non-text symbols and replace â€™ with '
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("[^[:alnum:] [:space:]]", "", x)))  # Remove non-alphanumeric symbols
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("â€™", "'", x)))  # Fix â€™ to '
+
+
+# Convert cleaned corpus to a data frame
+cleaned_statements_lots <- data.frame(statement = sapply(corpus, as.character),
+                                      status = sampled_balanced_data$status)
+
+# View a sample of the cleaned data
+head(cleaned_statements_lots)
+
+# Optional: Export the cleaned data to CSV
+file_path <- "C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Sentiment Analysis for Mental Health/Cleaned_Statements_try1.csv"
+write.csv(cleaned_statements_lots, file = file_path, row.names = FALSE)
+
+# Confirm that the file has been saved
+cat("CSV file saved at:", file_path)
+```
+
+
+
