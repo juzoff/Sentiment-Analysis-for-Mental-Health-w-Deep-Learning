@@ -1,0 +1,608 @@
+---
+title: "Sentiment Analysis for Mental Health - Data Preprocessing, Exploration, Visualization"
+output: html_document
+date: "2024-11-26"
+---
+
+# 1.1
+## Loading the orginal dataset
+```{r}
+# Set the file path for the CSV file
+file_path2 <- "C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Sentiment Analysis for Mental Health/Combined Data.csv"
+
+
+# Read the CSV file into a dataframe
+sentiment_analysis <- read.csv(file_path2, header = TRUE)
+```
+
+## Printing the first few rows of the dataframe
+```{r}
+# Print the first few rows of the dataframe
+print(head(sentiment_analysis))
+```
+## Removing redundant X column
+```{r}
+sentiment_analysis_use <- sentiment_analysis[, !names(sentiment_analysis) %in% c("X")]
+```
+
+```{r}
+print(head(sentiment_analysis_use))
+```
+
+## Structure of dataset
+```{r}
+str(sentiment_analysis_use)
+```
+## Check for missing values
+```{r}
+# Check for missing values in each column
+colSums(is.na(sentiment_analysis_use))
+```
+# 1.2
+## Distribution of mental health statuses
+```{r}
+status_counts <- table(sentiment_analysis_use$status)
+print(status_counts)
+```
+## Matching each status count to median (3888)
+```{r}
+# Load the libraries
+library(dplyr)
+library(caret)
+
+# Assuming your dataset is called sentiment_analysis
+# Get the distribution of the classes in the sentiment_analysis dataset
+class_counts <- table(sentiment_analysis_use$status)
+
+# Initialize an empty list to hold the balanced dataset
+balanced_data <- list()
+
+# Loop through each class
+for (class in names(class_counts)) {
+  # Subset the data for the current class
+  class_data <- sentiment_analysis_use %>% filter(status == class)
+  
+  # If the class has fewer than 3888 samples, oversample
+  if (nrow(class_data) < 3888) {
+    # Oversample with replacement
+    class_data <- class_data[sample(1:nrow(class_data), 3888, replace = TRUE), ]
+  }
+  
+  # If the class has more than 3888 samples, undersample
+  else if (nrow(class_data) > 3888) {
+    # Undersample to 3888 samples
+    class_data <- class_data[sample(1:nrow(class_data), 3888), ]
+  }
+  
+  # Add the balanced class data to the list
+  balanced_data[[class]] <- class_data
+}
+
+# Combine the balanced data
+balanced_data <- do.call(rbind, balanced_data)
+
+# Check the distribution of the balanced data
+balanced_class_counts <- table(balanced_data$status)
+print(balanced_class_counts)
+```
+## Structure of balanced dataset
+```{r}
+str(balanced_data)
+```
+# 1.3
+## Setting a fixed sample size per class (15% of 3888)
+```{r}
+# Set a fixed sample size per class (e.g., 15% of 3888)
+fixed_sample_size <- 583  # Round down to ensure consistency across classes
+
+# Perform stratified sampling
+sampled_balanced_data <- do.call(rbind, lapply(split(balanced_data, balanced_data$status), function(class_data) {
+  class_data[sample(1:nrow(class_data), fixed_sample_size), ]
+}))
+
+# Check the new distribution
+table(sampled_balanced_data$status)
+```
+
+## Structure of sampled balanced dataset
+```{r}
+str(sampled_balanced_data)
+```
+
+# 1.4
+## Preprocessing text data
+```{r}
+# Load required libraries
+library(textstem)
+library(tm)
+library(textclean)  # Ensure this library is loaded for replace_contraction()
+library(quanteda)   # For tokenization and n-grams
+
+# Replace stemming with lemmatization
+corpus <- Corpus(VectorSource(sampled_balanced_data$statement))
+
+# Apply preprocessing steps
+corpus <- tm_map(corpus, content_transformer(tolower))        # Convert to lowercase
+corpus <- tm_map(corpus, content_transformer(replace_contraction))  # Correctly use textclean's function
+corpus <- tm_map(corpus, removePunctuation)                   # Remove punctuation
+corpus <- tm_map(corpus, removeNumbers)                       # Remove numbers
+corpus <- tm_map(corpus, stripWhitespace)                     # Remove extra whitespaces
+
+# Remove non-alphanumeric characters (optional)
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("[^[:alnum:] ]", "", x)))
+
+# Remove URLs (optional)
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("http[s]?://\\S+", "", x)))
+
+# Remove mentions and hashtags (optional, useful for social media data)
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("@\\S+|#\\S+", "", x)))
+
+# Remove stopwords
+corpus <- tm_map(corpus, removeWords, stopwords("en"))
+
+# Correct spelling mistakes (optional, if needed)
+# Use textclean or hunspell for spell correction if applicable
+
+# Apply lemmatization
+cleaned_statements <- data.frame(statement = lemmatize_strings(sapply(corpus, as.character)),
+                                 status = sampled_balanced_data$status)
+
+# Remove short texts (optional)
+cleaned_statements <- cleaned_statements[nchar(as.character(cleaned_statements$statement)) > 3, ]
+
+# View a sample of the cleaned data
+head(cleaned_statements)
+
+```
+
+## Structure of cleaned sampled balanced dataset
+```{r}
+str(cleaned_statements)
+```
+
+# 2.1
+## TF of dataset
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(tm)
+
+# Assuming cleaned_statements is your data frame with text data and 'status' as the target variable
+
+# Create a corpus from the cleaned statements
+corpus <- Corpus(VectorSource(cleaned_statements$statement))
+
+# Apply raw term frequency weighting (default behavior of DocumentTermMatrix)
+dtm <- DocumentTermMatrix(corpus)
+
+# Convert DTM to a numeric matrix
+dtm_matrix <- as.matrix(dtm)
+
+# Convert DTM to a data frame
+tf_features <- as.data.frame(dtm_matrix)
+
+# Add the target variable (status) to the features
+tf_features$status <- cleaned_statements$status
+
+# Function to get top words based on TF for each status
+get_top_tf_words <- function(status_data, num_top_words = 10) {
+  # Filter data for the given status
+  status_data <- tf_features %>% filter(status == status_data)
+  
+  # Remove the 'status' column before calculating word frequencies
+  status_data <- status_data[, -ncol(status_data)]
+  
+  # Ensure all values are numeric
+  status_data <- as.data.frame(lapply(status_data, as.numeric))
+  
+  # Calculate the sum of raw term frequencies for each word
+  word_freq <- colSums(status_data)
+  
+  # Sort the words by their raw term frequencies in decreasing order
+  sorted_word_freq <- sort(word_freq, decreasing = TRUE)
+  
+  # Get the top N words based on raw term frequency
+  top_words <- head(sorted_word_freq, num_top_words)
+  
+  return(top_words)
+}
+
+# List of unique statuses
+statuses <- unique(tf_features$status)
+
+# Get top 10 TF words for each status
+top_tf_words_by_status <- lapply(statuses, function(status) get_top_tf_words(status, num_top_words = 10))
+
+# Display the top 10 TF words for each status
+names(top_tf_words_by_status) <- statuses
+top_tf_words_by_status
+```
+
+## TF - BARCHART
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(purrr)
+library(dplyr)
+
+# Convert the list to a combined data frame for plotting
+plot_data <- lapply(names(top_tf_words_by_status), function(status) {
+  data.frame(Status = status,
+             Word = names(top_tf_words_by_status[[status]]),
+             Frequency = unname(top_tf_words_by_status[[status]]))
+}) %>%
+  bind_rows()
+
+# Create individual plots for each status with frequencies next to bars
+status_plots <- plot_data %>%
+  split(.$Status) %>%
+  map(~ ggplot(.x, aes(x = reorder(Word, -Frequency), y = Frequency, fill = Status)) +
+        geom_bar(stat = "identity") +
+        geom_text(aes(label = Frequency), vjust = 0.5, hjust = -0.1, size = 3) +  # Add frequencies next to the bars
+        coord_flip() +
+        labs(title = paste("Top 10 Term Frequencies for", .x$Status[1]),
+             x = "Words", y = "Frequency") +
+        theme_minimal())
+
+# View individual plots by referencing their names
+# Example: Print the plot for "Anxiety"
+status_plots$Anxiety
+
+# Example: Print the plot for "Bipolar"
+status_plots$Bipolar
+
+# Example: Print the plot for "Depression"
+status_plots$Depression
+
+# Example: Print the plot for "Normal"
+status_plots$Normal
+
+# Example: Print the plot for "Personality disorder"
+status_plots$`Personality disorder`
+
+# Example: Print the plot for "Stress"
+status_plots$Stress
+
+# Example: Print the plot for "Suicidal"
+status_plots$Suicidal
+```
+
+# 2.2
+## Top TF-IDF Words by Status
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(tm)
+library(SnowballC)
+library(caret)
+
+# Assuming cleaned_statements is your data frame with text data and 'status' as the target variable
+
+# Create a corpus from the cleaned statements
+corpus <- Corpus(VectorSource(cleaned_statements$statement))
+
+# Apply TF-IDF weighting
+dtm <- DocumentTermMatrix(corpus, control = list(weighting = weightTfIdf))
+
+# Convert DTM to a numeric matrix
+dtm_matrix <- as.matrix(dtm)
+
+# Convert DTM to a data frame
+tfidf_features <- as.data.frame(dtm_matrix)
+
+# Add the target variable (status) to the features
+tfidf_features$status <- cleaned_statements$status
+
+# Function to get top words based on TF-IDF for each status
+get_top_tfidf_words <- function(status_data, num_top_words = 10) {
+  # Filter data for the given status
+  status_data <- tfidf_features %>% filter(status == status_data)
+  
+  # Remove the 'status' column before calculating word frequencies
+  status_data <- status_data[, -ncol(status_data)]
+  
+  # Ensure all values are numeric
+  status_data <- as.data.frame(lapply(status_data, as.numeric))
+  
+  # Calculate the sum of TF-IDF scores for each word
+  word_freq <- colSums(status_data)
+  
+  # Sort the words by their TF-IDF scores in decreasing order
+  sorted_word_freq <- sort(word_freq, decreasing = TRUE)
+  
+  # Get the top N words based on TF-IDF score
+  top_words <- head(sorted_word_freq, num_top_words)
+  
+  return(top_words)
+}
+
+# List of unique statuses
+statuses <- unique(tfidf_features$status)
+
+# Get top 10 TF-IDF words for each status
+top_words_per_status <- lapply(statuses, function(status) get_top_tfidf_words(status, num_top_words = 10))
+
+# Display the top 10 TF-IDF words for each status
+names(top_words_per_status) <- statuses
+top_words_per_status
+```
+
+## TF-IDF - BARCHART
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(tm)
+library(SnowballC)
+library(caret)
+library(ggplot2)
+library(purrr)  # Load purrr for the 'map' function
+
+# Assuming cleaned_statements is your data frame with text data and 'status' as the target variable
+
+# Create a corpus from the cleaned statements
+corpus <- Corpus(VectorSource(cleaned_statements$statement))
+
+# Apply TF-IDF weighting
+dtm <- DocumentTermMatrix(corpus, control = list(weighting = weightTfIdf))
+
+# Convert DTM to a numeric matrix
+dtm_matrix <- as.matrix(dtm)
+
+# Convert DTM to a data frame
+tfidf_features <- as.data.frame(dtm_matrix)
+
+# Add the target variable (status) to the features
+tfidf_features$status <- cleaned_statements$status
+
+# Function to get top words based on TF-IDF for each status
+get_top_tfidf_words <- function(status_data, num_top_words = 10) {
+  # Filter data for the given status
+  status_data <- tfidf_features %>% filter(status == status_data)
+  
+  # Remove the 'status' column before calculating word frequencies
+  status_data <- status_data[, -ncol(status_data)]
+  
+  # Ensure all values are numeric
+  status_data <- as.data.frame(lapply(status_data, as.numeric))
+  
+  # Calculate the sum of TF-IDF scores for each word
+  word_freq <- colSums(status_data)
+  
+  # Sort the words by their TF-IDF scores in decreasing order
+  sorted_word_freq <- sort(word_freq, decreasing = TRUE)
+  
+  # Get the top N words based on TF-IDF score
+  top_words <- head(sorted_word_freq, num_top_words)
+  
+  return(top_words)
+}
+
+# List of unique statuses
+statuses <- unique(tfidf_features$status)
+
+# Get top 10 TF-IDF words for each status
+top_words_per_status <- lapply(statuses, function(status) get_top_tfidf_words(status, num_top_words = 10))
+
+# Display the top 10 TF-IDF words for each status
+names(top_words_per_status) <- statuses
+top_words_per_status
+
+# TF-IDF Bar Chart for each status
+
+# Convert the list to a combined data frame for plotting TF-IDF words
+plot_tfidf_data <- lapply(names(top_words_per_status), function(status) {
+  data.frame(Status = status,
+             Word = names(top_words_per_status[[status]]),
+             TF_IDF = unname(top_words_per_status[[status]]))
+}) %>%
+  bind_rows()
+
+# Create individual plots for each status with frequencies next to bars
+status_tfidf_plots <- plot_tfidf_data %>%
+  split(.$Status) %>%
+  map(~ ggplot(.x, aes(x = reorder(Word, -TF_IDF), y = TF_IDF)) +  # Remove 'fill' aesthetic
+        geom_bar(stat = "identity", fill = "blue") +  # Set bars color to blue
+        geom_text(aes(label = round(TF_IDF, 2)), vjust = 0.5, hjust = -0.1, size = 3) +  # Add TF-IDF scores next to the bars
+        coord_flip() +
+        labs(title = paste("Top 10 TF-IDF Words for", .x$Status[1]),
+             x = "Words", y = "TF-IDF Score") +
+        theme_minimal())
+
+# Loop through each status and print the corresponding plot
+for(status in names(status_tfidf_plots)) {
+  print(status_tfidf_plots[[status]])
+}
+
+```
+
+# 2.3
+## TF of dataset - Bigram
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(quanteda)
+
+# Tokenize the statements into bigrams
+tokens <- quanteda::tokens(cleaned_statements$statement, remove_punct = TRUE)
+tokens <- tokens_ngrams(tokens, n = 2)
+
+# Create a document-feature matrix (DFM) from the bigrams
+dfm <- dfm(tokens)
+
+# Add the target variable (status) to the DFM as a docvar (document variable)
+docvars(dfm, "status") <- cleaned_statements$status
+
+# Function to get top bigrams based on term frequencies (TF) for each status
+get_top_tf_bigrams <- function(dfm, status, num_top_bigrams = 10) {
+  # Filter the DFM for the given status
+  status_dfm <- dfm[docvars(dfm, "status") == status, ]
+  
+  # Calculate the sum of raw term frequencies for each bigram
+  bigram_freq <- colSums(status_dfm)
+  
+  # Sort the bigrams by their raw term frequencies in decreasing order
+  sorted_bigram_freq <- sort(bigram_freq, decreasing = TRUE)
+  
+  # Get the top N bigrams
+  top_bigrams <- head(sorted_bigram_freq, num_top_bigrams)
+  
+  return(top_bigrams)
+}
+
+# List of unique statuses
+statuses <- unique(cleaned_statements$status)
+
+# Get top 10 bigrams for each status
+top_tf_bigrams_by_status <- lapply(statuses, function(status) {
+  get_top_tf_bigrams(dfm, status, num_top_bigrams = 10)
+})
+
+# Assign status names to the results
+names(top_tf_bigrams_by_status) <- statuses
+
+# Display the top 10 bigrams for each status
+top_tf_bigrams_by_status
+```
+
+## Bigram - BARCHART
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Convert the list to a combined data frame for plotting bigram term frequencies
+plot_bigram_data <- lapply(names(top_tf_bigrams_by_status), function(status) {
+  data.frame(Status = status,
+             Bigram = names(top_tf_bigrams_by_status[[status]]),
+             Frequency = unname(top_tf_bigrams_by_status[[status]]))
+}) %>%
+  bind_rows()
+
+# Create individual plots for each status with frequencies next to bars, and set bar color to purple
+status_bigram_plots <- plot_bigram_data %>%
+  split(.$Status) %>%
+  map(~ ggplot(.x, aes(x = reorder(Bigram, -Frequency), y = Frequency)) + 
+        geom_bar(stat = "identity", fill = "purple") +  # Set bars color to purple
+        geom_text(aes(label = Frequency), vjust = 0.5, hjust = -0.1, size = 3) +  # Add frequencies next to the bars
+        coord_flip() +
+        labs(title = paste("Top 10 Bigram Term Frequencies for", .x$Status[1]),
+             x = "Bigrams", y = "Frequency") +
+        theme_minimal())
+
+# Loop through each status and print the corresponding plot
+for(status in names(status_bigram_plots)) {
+  print(status_bigram_plots[[status]])
+}
+
+```
+
+# 3.1
+## Function to search for a word in a particular status and return the count of occurrences
+```{r}
+search_word_in_status_count <- function(word, status_value, cleaned_statements) {
+  
+  # Convert the word and status to lowercase for case-insensitive search
+  word <- tolower(word)
+  status_value <- tolower(status_value)
+  
+  # Filter the dataset based on the status
+  filtered_data <- cleaned_statements %>% filter(tolower(status) == status_value)
+  
+  # Search for the word in the statement (case-insensitive)
+  matched_data <- filtered_data %>%
+    filter(grepl(word, tolower(statement)))  # 'tolower' ensures case-insensitive matching
+  
+  # Return the count of rows where the word appears
+  return(nrow(matched_data))
+}
+
+# Example usage
+word_to_search <- "sad"
+status_to_filter <- "Depression"
+
+# Get the count of occurrences of the word "feel" in the "Depression" status category
+word_count <- search_word_in_status_count(word_to_search, status_to_filter, cleaned_statements)
+
+# View the count
+word_count
+```
+
+# 3.2
+## Function to search for a word in a particular status
+```{r}
+search_word_in_status <- function(word, status_value, cleaned_statements) {
+  
+  # Convert the word and status to lowercase for case-insensitive search
+  word <- tolower(word)
+  status_value <- tolower(status_value)
+  
+  # Filter the dataset based on the status
+  filtered_data <- cleaned_statements %>% filter(tolower(status) == status_value)
+  
+  # Search for the word in the statement (case-insensitive)
+  matched_data <- filtered_data %>%
+    filter(grepl(word, tolower(statement)))  # 'tolower' ensures case-insensitive matching
+  
+  # Return the rows where the word appears
+  return(matched_data)
+}
+
+# Example usage
+word_to_search <- "change"
+status_to_filter <- "Bipolar"
+
+# Search for the word "stress" in the "Stress" status category
+results <- search_word_in_status(word_to_search, status_to_filter, cleaned_statements)
+
+# View the results
+head(results)
+```
+
+# 3.3
+## Cosine similarity
+```{r}
+# Load the textTinyR package
+library(textTinyR)
+
+# Define two example text inputs
+text1 <- "I keep waking up with a racing heart and feel like my anxiety is out of control."
+
+text2 <- "Life feels empty, and I can't find joy or hope in anything anymore."
+
+# Use the COS_TEXT function to calculate cosine similarity
+cosine_sim <- COS_TEXT(text_vector1 = text1, 
+                       text_vector2 = text2, 
+                       threads = 1)
+
+# Print the cosine similarity result
+print(cosine_sim)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
