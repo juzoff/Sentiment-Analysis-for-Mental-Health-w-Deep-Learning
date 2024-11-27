@@ -1,8 +1,8 @@
-# DEEP LEARNING USING DistillBERT
+# DEEP LEARNING USING DistilBERT
 
-## Using R, Prepared Dataset for DistillBERT Training Through Light Preprocessing and Exported as CSV File
+## Using R, Prepared Dataset for DistilBERT Training Through Light Preprocessing and Exported as CSV File
 ### > FILE: 
-    - Dataset preperation for DistillBERT.Rmd
+    - Dataset preperation for DistilBERT.Rmd
     - Dataset preperation for DistilBERT Training.pdf (Knitted)
 #### Highlights:
 - Check for missing values
@@ -17,11 +17,11 @@
     - Removing non-alphanumeric characters
     - Fixing specific encoding issues (e.g., replacing â€™ with ')
 - Exporting Cleaned Data:
-  - The cleaned dataset is exported as a CSV file (Cleaned_Statements_Less.csv) for model training with DistillBERT
+  - The cleaned dataset is exported as a CSV file (Cleaned_Statements_Less.csv) for model training with DistilBERT
 
-## Loaded the Light Preprocessed Dataset and Trained a DistillBERT Model for Mental Health Status Classification
+## Loaded the Light Preprocessed Dataset and Trained a DistilBERT Model for Mental Health Status Classification
 ### > FILE: 
-    - DistillBERT_Sentiment_Analysis_Deep_Learning.ipynb
+    - DistilBERT_Sentiment_Analysis_Deep_Learning.ipynb
 #### Highlights:
 - Dataset Preparation:
   - Preprocessed and classified mental health status into 7 categories (e.g., Normal, Depression, Anxiety)
