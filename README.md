@@ -2,7 +2,7 @@
 # NLP - Data Preprocessing, Exploration, and Visualization (R)
 
 ## Task 1 ##
-##  > FILES:
+###  > FILES: <
     Sentiment Analysis for Mental Health - Data Preprocessing, Exploration, Visualization.Rmd
     Sentiment Analysis for Mental Health - Data Preprocessing, Exploration, Visualization.pdf (Knitted)
 ### 1.1: Loaded and explored the dataset, removing redundant columns and checking/handling missing values
@@ -30,7 +30,7 @@
 
 
 ## Task 2 ##
-##  > FILES:
+###  > FILES: <
     Sentiment Analysis for Mental Health - Word Clouds.Rmd
     Sentiment-Analysis-for-Mental-Health---Word-Clouds.pdf (Knitted)
 ### Generated word clouds to illustrate key terms across the entire dataset and by individual status
