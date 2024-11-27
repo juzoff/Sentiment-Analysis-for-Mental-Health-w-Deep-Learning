@@ -13,7 +13,7 @@
     Sentiment Analysis for Mental Health - Barcharts.PDF
 ### 3.1: Function to search for a word in a particular status and return the count of occurrences
 ### 3.2: Function to search for the location of a word in a particular status
-### 3.3: Function to calculate Cosine Similarity between 2 inputted sentences
+### 3.3: Function to calculate cosine similarity between 2 inputted sentences
 
 ## > FILES:
     Sentiment Analysis for Mental Health - Word Clouds.Rmd
