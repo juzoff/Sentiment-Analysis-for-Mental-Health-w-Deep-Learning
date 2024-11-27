@@ -25,7 +25,7 @@
 #### Highlights:
 - Dataset Preparation:
   - Preprocessed and classified mental health status into 7 categories (e.g., Normal, Depression, Anxiety)
-- DistillBERT Tokenization:
+- DistilBERT Tokenization:
    - Applied DistilBertTokenizer for text tokenization
 - Custom Dataset Class:
   - Organized tokenized data using a SentimentDataset class
@@ -55,7 +55,7 @@
 ![output](https://github.com/user-attachments/assets/4591fdcb-678c-41d8-a27c-f5ed112f3784)
 
 
-## Implemented a Real-Time Prediction System That Classifies New Statements and Provides a Confidence Score for Each Mental Health Status Through the Trained DistillBERT Model
+## Implemented a Real-Time Prediction System That Classifies New Statements and Provides a Confidence Score for Each Mental Health Status Through the Trained DistilBERT Model
 ### > FILE: 
     - DistilBERT_Sentiment_Analysis_NLP_Deep_Learning.ipynb
 #### Highlights:
